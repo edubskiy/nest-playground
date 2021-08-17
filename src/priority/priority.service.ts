@@ -11,6 +11,13 @@ export class PriorityService {
     const priority: PriorityProgram['metaFields']['priority'] = {};
     const level: Record<number, number> = {};
 
+    // TODO => simulate ltree
+    programs.sort((a, b) => {
+      if (a.id === b.id) return 0;
+
+      return a.id > b.id ? 1 : -1;
+    })
+
     // Programs are sorted so:
     // - A      1.0
     // -- A.1   1.1
@@ -23,20 +30,21 @@ export class PriorityService {
       const foundPath = program.path.find(p => p.indexOf(context) > -1) // [0,1,2]
       const foundParentProgram = foundPath[foundPath.length - 2]; // 1
       const foundLevel = foundPath.length - 1; // 2, exclude context parent program
-      if (priority[program.id]) {
+      if (!priority[program.id]) {
         priority[program.id] = '';
       }
+
       if (priority[foundParentProgram]) {
         priority[program.id] = `${priority[foundParentProgram]}.`
       }
 
-      if (!level[foundLevel]) {
-        level[foundLevel] = 1;
+      if (!level[foundParentProgram]) {
+        level[foundParentProgram] = 1;
       }
 
-      priority[program.id] += `${level[foundLevel]}`
+      priority[program.id] += `${level[foundParentProgram]}`
 
-      level[foundLevel]++;
+      level[foundParentProgram]++;
     }
 
     return priority;
