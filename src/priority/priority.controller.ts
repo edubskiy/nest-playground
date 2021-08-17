@@ -8,7 +8,12 @@ export class PriorityController {
     private priorityService: PriorityService
   ) {}
 
-  @Get('/program')
+  @Get('/about')
+  about() {
+    return 'Priority module v0.1';
+  }
+
+  @Get('/reset')
   priority(getPriorityDTO: GetPriorityDTO) {
     return this.priorityService.resetPriority();
   }
