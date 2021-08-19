@@ -50,7 +50,23 @@ export class PriorityService {
     return priority;
   }
 
-  async recountPriority() {}
+  async recountPriority(baseProgram: PriorityProgram, programs: PriorityProgram[]) {
+    const basePriority = (baseProgram.metaFields || {}).priority;
+    const recountedPriority: PriorityProgram['metaFields']['priority'] = {}
+
+    for (const program of programs) {
+      const foundPath = program.path.find(p => p.indexOf(baseProgram.id) > -1) // [0,1,2]
+      const foundParentProgram = foundPath[foundPath.length - 2]; // 1
+
+      if (!recountedPriority[program.id] && !basePriority[program.id]) {
+        recountedPriority[program.id] = '';
+      }
+
+      if (recountedPriority[foundParentProgram] || basePriority[foundParentProgram]) {
+        recountedPriority[program.id] = `${recountedPriority[foundParentProgram] || basePriority[foundParentProgram]}.`
+      }
+    }
+  }
 
   async movePriority() {}
 }
